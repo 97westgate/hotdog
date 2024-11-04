@@ -89,6 +89,7 @@ function displayHotDogBanner(hotdogFound) {
 }
 
 shutterButton.addEventListener('click', async () => {
+  console.log('Button clicked');
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
     if (isHotDog) {
