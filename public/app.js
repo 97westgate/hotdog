@@ -86,20 +86,38 @@ function displayHotDogBanner(hotdogFound) {
   // }, 5000);
 }
 
-shutterButton.addEventListener('click', () => {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then((stream) => {
+shutterButton.addEventListener('click', async () => {
+  try {
+    if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
       cameraVideoStream.srcObject = stream;
-      return cameraVideoStream.play();
-    })
-    .then(() => {
-      console.log('Camera is playing');
-    })
-    .catch((err) => {
-      console.error('Error accessing or playing the camera:', err);
-      alert('Error accessing the camera. Please check permissions and try again.');
+      await cameraVideoStream.play();
+      console.log('Camera stream started');
+    } else {
+      console.log('Camera is already active');
+    }
+
+    // Proceed to capture the image and analyze it
+    const data = await captureImage();
+    checkIfHotDog(data).then(isHotDog => {
+      if (isHotDog) {
+        console.log('This is a hot dog!');
+        displayHotDogBanner(true);
+      } else {
+        console.log('This is not a hot dog.');
+        displayHotDogBanner(false);
+      }
+    }).catch(err => {
+      console.error('Error checking image:', err);
+      console.log('There was an error analyzing the image.');
     });
+  } catch (err) {
+    console.error('Camera access error:', err);
+    alert('Error accessing the camera. Please check permissions and try again.');
+  }
 });
+
+
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
     if (isHotDog) {
