@@ -16,7 +16,9 @@ const capturedImages = []
 const currentImage = 0
 
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+  // navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+
     .then((stream) => {
       cameraVideoStream.srcObject = stream;
       cameraVideoStream.play();
