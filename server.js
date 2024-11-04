@@ -6,9 +6,8 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json({ limit: '20mb' }));
-app.use(express.static('public')); // Serve static files from 'public'
+app.use(express.static('public'));
 
-// Serve index.html for root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

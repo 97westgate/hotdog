@@ -15,7 +15,6 @@ let streaming = false
 const capturedImages = []
 const currentImage = 0
 
-// Connect media device
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia({ video: true })) {
   navigator.mediaDevices.getUserMedia({ video: true }).then ((stream) => {
     cameraVideoStream.srcObject = stream
@@ -43,7 +42,6 @@ cameraVideoStream.addEventListener(
   false
 );
 
-// Capture snapshots using HTML Canvas
 function captureImage() {
   return new Promise((resolve) => {
     requestAnimationFrame(() => {
@@ -52,36 +50,64 @@ function captureImage() {
       canvas.height = height;
       canvasContext.drawImage(cameraVideoStream, 0, 0, width, height);
 
-      // Convert captured data to image (base64) asynchronously
       setTimeout(() => {
         const data = canvas.toDataURL('image/png');
         currentImageElement.src = data;
         photosButton.style.backgroundImage = `url(${data})`;
-        capturedImages.unshift(data); // Reverse order handled here efficiently
+        capturedImages.unshift(data);
         resolve(data);
       }, 0);
     });
   });
 }
 
+function displayHotDogBanner() {
+  const banner = document.createElement('div');
+  banner.style.position = 'fixed';
+  banner.style.top = '0';
+  banner.style.width = '100%';
+  // banner.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+  // banner.style.textAlign = 'center';
+  // banner.style.padding = '20px';
+  banner.style.zIndex = '1000';
+
+  const img = document.createElement('img');
+  img.src = 'assets/images/green.png';
+  img.style.maxWidth = '100%';
+  img.style.width = '100%';
+  img.style.height = 'auto';
+
+  banner.appendChild(img);
+
+  document.body.appendChild(banner);
+
+  // setTimeout(() => {
+  //   banner.remove();
+  // }, 5000);
+}
+
 shutterButton.addEventListener('click', async () => {
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
-    console.log(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
+    if (isHotDog) {
+      console.log('This is a hot dog!');
+      displayHotDogBanner();
+    } else {
+      console.log('This is not a hot dog.');
+    }
   }).catch(err => {
     console.error('Error checking image:', err);
     console.log('There was an error analyzing the image.');
   });
 });
 
-// Event handlers to close and open gallery
+
 photosButton.addEventListener('click', () => {
   gallery.classList.add('show-gallery')
   currentImageElement.setAttribute('data-index', 0)
 })
 closeGalleryButton.addEventListener('click', () => gallery.classList.remove('show-gallery'))
 
-// Event handlers to browse gallery (next and previous)
 nextButton.addEventListener('click', () => {
   const index = Number(currentImageElement.getAttribute('data-index'))
   if (capturedImages[index + 1]) {
@@ -117,9 +143,3 @@ async function checkIfHotDog(imageData) {
     return false;
   }
 }
-
-// captureImage();  // Assuming the image is stored as a variable or data URL
-// checkIfHotDog(data).then(isHotDog => {
-//   alert(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
-// });
-
