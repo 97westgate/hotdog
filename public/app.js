@@ -15,15 +15,17 @@ let streaming = false
 const capturedImages = []
 const currentImage = 0
 
-navigator.mediaDevices.getUserMedia({ video: true })
-  .then((stream) => {
-    cameraVideoStream.srcObject = stream;
-    cameraVideoStream.play();
-  })
-  .catch((err) => {
-    console.error('Camera access error:', err);
-    alert('Error accessing the camera. Please check permissions and try again.');
-  });
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then((stream) => {
+      cameraVideoStream.srcObject = stream;
+      cameraVideoStream.play();
+    })
+    .catch((err) => {
+      console.error('Camera access error:', err);
+      alert('Error accessing the camera. Please check permissions and try again.');
+    });
+}
 
 cameraVideoStream.addEventListener(
   "canplay",
@@ -87,40 +89,20 @@ function displayHotDogBanner(hotdogFound) {
 }
 
 shutterButton.addEventListener('click', async () => {
-  try {
-    if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      cameraVideoStream.srcObject = stream;
-      await cameraVideoStream.play();
-      console.log('Camera stream started');
+  const data = await captureImage();
+  checkIfHotDog(data).then(isHotDog => {
+    if (isHotDog) {
+      console.log('This is a hot dog!');
+      displayHotDogBanner(true);
     } else {
-      console.log('Camera is already active');
+      console.log('This is not a hot dog.');
+      displayHotDogBanner(false);
     }
-
-    const data = await captureImage();
-    try {
-      const isHotDog = await checkIfHotDog(data);
-      if (isHotDog) {
-        console.log('This is a hot dog!');
-        displayHotDogBanner(true);
-      } else {
-        console.log('This is not a hot dog.');
-        displayHotDogBanner(false);
-      }
-    } catch (analysisError) {
-      console.error('Error checking image:', analysisError);
-      alert('There was an error analyzing the image.');
-    }
-  } catch (err) {
-    console.error('Camera access error:', err);
-    if (err.name === 'NotAllowedError') {
-      alert('Camera access is not allowed. Please enable camera permissions in your browser settings and try again.');
-    } else {
-      alert('Error accessing the camera. Please check permissions and try again.');
-    }
-  }
+  }).catch(err => {
+    console.error('Error checking image:', err);
+    console.log('There was an error analyzing the image.');
+  });
 });
-
 
 
 photosButton.addEventListener('click', () => {
