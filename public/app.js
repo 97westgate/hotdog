@@ -58,7 +58,7 @@ function captureImage() {
       setTimeout(() => {
         const data = canvas.toDataURL('image/png');
         currentImageElement.src = data;
-        photosButton.style.backgroundImage = `url(${data})`;
+        // photosButton.style.backgroundImage = `url(${data})`;
         capturedImages.unshift(data);
         resolve(data);
       }, 0);
@@ -116,11 +116,11 @@ shutterButton.addEventListener('click', async () => {
 });
 
 
-photosButton.addEventListener('click', () => {
-  gallery.classList.add('show-gallery')
-  currentImageElement.setAttribute('data-index', 0)
-})
-closeGalleryButton.addEventListener('click', () => gallery.classList.remove('show-gallery'))
+// photosButton.addEventListener('click', () => {
+//   gallery.classList.add('show-gallery')
+//   currentImageElement.setAttribute('data-index', 0)
+// })
+// closeGalleryButton.addEventListener('click', () => gallery.classList.remove('show-gallery'))
 
 nextButton.addEventListener('click', () => {
   const index = Number(currentImageElement.getAttribute('data-index'))
