@@ -125,24 +125,35 @@ prevButton.addEventListener('click', () => {
     currentImageElement.setAttribute('data-index', index - 1)
   }
 })
+
 async function checkIfHotDog(imageData) {
-  const response = await fetch('/check-image', {
+  const baseURL = window.location.origin.includes('localhost')
+    ? 'http://localhost:3000'
+    : window.location.origin;
+
+  const response = await fetch(`${baseURL}/check-image`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ imageData }),
   });
-  const result = await response.json();
 
-  if (result.responses && result.responses[0] && result.responses[0].labelAnnotations) {
-    console.log('Labels:', result.responses[0].labelAnnotations);
-    return result.responses[0].labelAnnotations.some(label => {
-      const labelLower = label.description.toLowerCase();
-      return labelLower.includes('hot dog') || labelLower.includes('sausage') || labelLower.includes('food');
-    });
-  } else {
-    console.error('No label annotations found or invalid response:', result);
+  try {
+    const result = await response.json();
+    if (result.responses && result.responses[0] && result.responses[0].labelAnnotations) {
+      console.log('Labels:', result.responses[0].labelAnnotations);
+      return result.responses[0].labelAnnotations.some(label => {
+        const labelLower = label.description.toLowerCase();
+        return labelLower.includes('hot dog') || labelLower.includes('sausage') || labelLower.includes('food');
+      });
+    } else {
+      console.error('No label annotations found or invalid response:', result);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error parsing JSON response:', error);
     return false;
   }
 }
+
