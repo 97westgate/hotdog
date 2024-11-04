@@ -36,8 +36,9 @@ button {
   height: 100vh;
   width: 100vw;
   object-fit: cover;
-  transform: scaleX(-1);
+  /* transform: scaleX(-1); commenting out for now to check if horizontal flip happen*/
 }
+
 
 /* CAMERA BOTTOM */
 .camera-bottom {

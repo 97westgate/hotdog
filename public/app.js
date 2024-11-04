@@ -16,7 +16,7 @@ const capturedImages = []
 const currentImage = 0
 
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) // change to user??
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     .then((stream) => {
       cameraVideoStream.srcObject = stream;
       cameraVideoStream.play();
@@ -53,14 +53,7 @@ function captureImage() {
       const canvasContext = canvas.getContext('2d');
       canvas.width = width;
       canvas.height = height;
-      if (cameraVideoStream.srcObject.getVideoTracks()[0].getSettings().facingMode === 'environment') {
-        canvasContext.translate(width, 0);
-        canvasContext.scale(-1, 1);
-      }
-
       canvasContext.drawImage(cameraVideoStream, 0, 0, width, height);
-
-      canvasContext.setTransform(1, 0, 0, 1, 0, 0);
 
       setTimeout(() => {
         const data = canvas.toDataURL('image/png');
