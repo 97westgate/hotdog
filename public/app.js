@@ -20,12 +20,24 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     .then((stream) => {
       cameraVideoStream.srcObject = stream;
       cameraVideoStream.play();
+
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+
+      if (settings.facingMode === 'user' || settings.facingMode === undefined) {
+        cameraVideoStream.style.transform = 'scaleX(-1)';
+      } else {
+        cameraVideoStream.style.transform = '';
+      }
+      
+      console.log('Active camera facing mode:', settings.facingMode || 'Not specified');
     })
     .catch((err) => {
       console.error('Camera access error:', err);
       alert('Error accessing the camera. Please check permissions and try again.');
     });
 }
+
 
 cameraVideoStream.addEventListener(
   "canplay",
