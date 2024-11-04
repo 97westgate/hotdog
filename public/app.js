@@ -118,23 +118,6 @@ shutterButton.addEventListener('click', async () => {
 });
 
 
-  const data = await captureImage();
-  checkIfHotDog(data).then(isHotDog => {
-    if (isHotDog) {
-      console.log('This is a hot dog!');
-      displayHotDogBanner(true);
-    } else {
-      console.log('This is not a hot dog.');
-      displayHotDogBanner(false);
-    }
-  }).catch(err => {
-    console.error('Error checking image:', err);
-    console.log('There was an error analyzing the image.');
-  });
-});
-
-
-
 photosButton.addEventListener('click', () => {
   gallery.classList.add('show-gallery')
   currentImageElement.setAttribute('data-index', 0)
