@@ -44,23 +44,21 @@ cameraVideoStream.addEventListener(
 );
 
 // Capture snapshots using HTML Canvas
-function captureImage () {
-  const canvasContext = canvas.getContext('2d')
-  canvas.width = width
-  canvas.height = height
-  canvasContext.drawImage(cameraVideoStream, 0, 0, width, height)
+function captureImage() {
+  requestAnimationFrame(() => {
+    const canvasContext = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    canvasContext.drawImage(cameraVideoStream, 0, 0, width, height);
 
-  // Convert captured data to image (base64)
-  const data = canvas.toDataURL('image/png')
-  currentImageElement.src = data
-  photosButton.style.backgroundImage = `url(${data})`
-  capturedImages.push(data)
-  capturedImages.reverse()
-
-  // Create new Image elements from array
-  capturedImages.forEach((image) => {
-
-  })
+    // Convert captured data to image (base64) asynchronously
+    setTimeout(() => {
+      const data = canvas.toDataURL('image/png');
+      currentImageElement.src = data;
+      photosButton.style.backgroundImage = `url(${data})`;
+      capturedImages.unshift(data); // Reverse order handled here efficiently
+    }, 0);
+  });
 }
 
 shutterButton.addEventListener('click', () => captureImage())
