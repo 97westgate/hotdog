@@ -15,12 +15,17 @@ let streaming = false
 const capturedImages = []
 const currentImage = 0
 
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia({ video: true })) {
-  navigator.mediaDevices.getUserMedia({ video: true }).then ((stream) => {
-    cameraVideoStream.srcObject = stream
-    cameraVideoStream.play()
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => {
+    cameraVideoStream.srcObject = stream;
+    cameraVideoStream.play();
   })
-} 
+  .catch(err => {
+    console.error('Error accessing camera:', err);
+    alert('Camera access error. Please check permissions.');
+  });
+}
 
 cameraVideoStream.addEventListener(
   "canplay",
