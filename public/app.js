@@ -86,20 +86,20 @@ function displayHotDogBanner(hotdogFound) {
   // }, 5000);
 }
 
-shutterButton.addEventListener('click', async () => {
-  try {
-    if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+shutterButton.addEventListener('click', () => {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then((stream) => {
       cameraVideoStream.srcObject = stream;
-      await cameraVideoStream.play();
-      console.log('Camera stream started');
-    }
-  } catch (err) {
-    console.error('Camera access error:', err);
-    alert('Error accessing the camera. Please check permissions and try again.');
-    return;
-  }
-
+      return cameraVideoStream.play();
+    })
+    .then(() => {
+      console.log('Camera is playing');
+    })
+    .catch((err) => {
+      console.error('Error accessing or playing the camera:', err);
+      alert('Error accessing the camera. Please check permissions and try again.');
+    });
+});
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
     if (isHotDog) {
