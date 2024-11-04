@@ -7,6 +7,8 @@ const closeGalleryButton = document.getElementById('close-gallery')
 const nextButton = document.getElementById('next')
 const prevButton = document.getElementById('prev')
 const canvas = document.getElementById('canvas')
+require('dotenv').config();
+const apiKey = process.env.GOOGLE_CLOUD_VISION_API_KEY;
 
 let width = window.innerWidth
 let height = 0
@@ -85,3 +87,24 @@ prevButton.addEventListener('click', () => {
     currentImageElement.setAttribute('data-index', index - 1)
   }
 })
+
+async function checkIfHotDog(imageData) {
+  const response = await fetch('https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requests: [{
+        image: { content: imageData.replace('data:image/png;base64,', '') },
+        features: [{ type: 'LABEL_DETECTION', maxResults: 5 }],
+      }],
+    }),
+  });
+  const result = await response.json();
+  return result.responses[0].labelAnnotations.some(label => label.description.toLowerCase() === 'hot dog');
+}
+captureImage();  // Assuming the image is stored as a variable or data URL
+checkIfHotDog(data).then(isHotDog => {
+  alert(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
+});
