@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const fetch = require('node-fetch'); // Ensure this is installed with `npm install node-fetch`
+const fetch = require('node-fetch');
 const app = express();
 const PORT = 3000;
 
@@ -12,7 +12,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Add the /api/check-image route for local testing
 app.post('/api/check-image', async (req, res) => {
   const { imageData } = req.body;
 
