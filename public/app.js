@@ -7,8 +7,6 @@ const closeGalleryButton = document.getElementById('close-gallery')
 const nextButton = document.getElementById('next')
 const prevButton = document.getElementById('prev')
 const canvas = document.getElementById('canvas')
-require('dotenv').config();
-const apiKey = process.env.GOOGLE_CLOUD_VISION_API_KEY;
 
 let width = window.innerWidth
 let height = 0
@@ -47,23 +45,34 @@ cameraVideoStream.addEventListener(
 
 // Capture snapshots using HTML Canvas
 function captureImage() {
-  requestAnimationFrame(() => {
-    const canvasContext = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-    canvasContext.drawImage(cameraVideoStream, 0, 0, width, height);
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      const canvasContext = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+      canvasContext.drawImage(cameraVideoStream, 0, 0, width, height);
 
-    // Convert captured data to image (base64) asynchronously
-    setTimeout(() => {
-      const data = canvas.toDataURL('image/png');
-      currentImageElement.src = data;
-      photosButton.style.backgroundImage = `url(${data})`;
-      capturedImages.unshift(data); // Reverse order handled here efficiently
-    }, 0);
+      // Convert captured data to image (base64) asynchronously
+      setTimeout(() => {
+        const data = canvas.toDataURL('image/png');
+        currentImageElement.src = data;
+        photosButton.style.backgroundImage = `url(${data})`;
+        capturedImages.unshift(data); // Reverse order handled here efficiently
+        resolve(data);
+      }, 0);
+    });
   });
 }
 
-shutterButton.addEventListener('click', () => captureImage())
+shutterButton.addEventListener('click', async () => {
+  const data = await captureImage();
+  checkIfHotDog(data).then(isHotDog => {
+    console.log(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
+  }).catch(err => {
+    console.error('Error checking image:', err);
+    console.log('There was an error analyzing the image.');
+  });
+});
 
 // Event handlers to close and open gallery
 photosButton.addEventListener('click', () => {
@@ -87,24 +96,30 @@ prevButton.addEventListener('click', () => {
     currentImageElement.setAttribute('data-index', index - 1)
   }
 })
-
 async function checkIfHotDog(imageData) {
-  const response = await fetch('https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY', {
+  const response = await fetch('/check-image', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      requests: [{
-        image: { content: imageData.replace('data:image/png;base64,', '') },
-        features: [{ type: 'LABEL_DETECTION', maxResults: 5 }],
-      }],
-    }),
+    body: JSON.stringify({ imageData }),
   });
   const result = await response.json();
-  return result.responses[0].labelAnnotations.some(label => label.description.toLowerCase() === 'hot dog');
+
+  if (result.responses && result.responses[0] && result.responses[0].labelAnnotations) {
+    console.log('Labels:', result.responses[0].labelAnnotations);
+    return result.responses[0].labelAnnotations.some(label => {
+      const labelLower = label.description.toLowerCase();
+      return labelLower.includes('hot dog') || labelLower.includes('sausage') || labelLower.includes('food');
+    });
+  } else {
+    console.error('No label annotations found or invalid response:', result);
+    return false;
+  }
 }
-captureImage();  // Assuming the image is stored as a variable or data URL
-checkIfHotDog(data).then(isHotDog => {
-  alert(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
-});
+
+// captureImage();  // Assuming the image is stored as a variable or data URL
+// checkIfHotDog(data).then(isHotDog => {
+//   alert(isHotDog ? 'This is a hot dog!' : 'This is not a hot dog.');
+// });
+
