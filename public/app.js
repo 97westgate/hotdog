@@ -61,24 +61,20 @@ function captureImage() {
   });
 }
 
-function displayHotDogBanner() {
+function displayHotDogBanner(hotdogFound) {
   const banner = document.createElement('div');
   banner.style.position = 'fixed';
-  banner.style.top = '0';
+  banner.style.bottom = '0'; // bottom
   banner.style.width = '100%';
-  // banner.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-  // banner.style.textAlign = 'center';
-  // banner.style.padding = '20px';
   banner.style.zIndex = '1000';
 
   const img = document.createElement('img');
-  img.src = 'assets/images/green.png';
+  img.src = hotdogFound ? 'assets/images/green.png' : 'assets/images/red.png';
   img.style.maxWidth = '100%';
   img.style.width = '100%';
   img.style.height = 'auto';
 
   banner.appendChild(img);
-
   document.body.appendChild(banner);
 
   // setTimeout(() => {
@@ -91,9 +87,10 @@ shutterButton.addEventListener('click', async () => {
   checkIfHotDog(data).then(isHotDog => {
     if (isHotDog) {
       console.log('This is a hot dog!');
-      displayHotDogBanner();
+      displayHotDogBanner(true);
     } else {
       console.log('This is not a hot dog.');
+      displayHotDogBanner(false);
     }
   }).catch(err => {
     console.error('Error checking image:', err);
