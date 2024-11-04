@@ -69,7 +69,8 @@ function captureImage() {
 function displayHotDogBanner(hotdogFound) {
   const banner = document.createElement('div');
   banner.style.position = 'fixed';
-  banner.style.bottom = '0'; // bottom
+  banner.style.top = hotdogFound ? '0' : 'auto';
+  banner.style.bottom = hotdogFound ? 'auto' : '0';
   banner.style.width = '100%';
   banner.style.zIndex = '1000';
 
