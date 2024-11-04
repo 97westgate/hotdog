@@ -1,4 +1,3 @@
-const cameraVideoStream = document.getElementById('camera-stream')
 const shutterButton = document.getElementById('shutter')
 const photosButton = document.getElementById('photos-btn')
 // const gallery = document.querySelector('.gallery-view')
@@ -15,10 +14,13 @@ let streaming = false
 const capturedImages = []
 const currentImage = 0
 
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  // navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+const cameraVideoStream = document.getElementById('camera-stream');
+const switchCameraButton = document.getElementById('switch-camera');
+let currentFacingMode = 'user'; // Start with the front-facing camera by default
 
+// Function to start the camera
+function startCamera(facingMode) {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode } })
     .then((stream) => {
       cameraVideoStream.srcObject = stream;
       cameraVideoStream.play();
@@ -26,12 +28,13 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       const track = stream.getVideoTracks()[0];
       const settings = track.getSettings();
 
-      if (settings.facingMode === 'user' || settings.facingMode === undefined) {
+      // Apply horizontal flip for front camera if necessary
+      if (settings.facingMode === 'user' || !settings.facingMode) {
         cameraVideoStream.style.transform = 'scaleX(-1)';
       } else {
         cameraVideoStream.style.transform = '';
       }
-      
+
       console.log('Active camera facing mode:', settings.facingMode || 'Not specified');
     })
     .catch((err) => {
@@ -39,6 +42,18 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       alert('Error accessing the camera. Please check permissions and try again.');
     });
 }
+
+// Initial camera start
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  startCamera(currentFacingMode);
+}
+
+// Event listener for switching the camera
+switchCameraButton.addEventListener('click', () => {
+  currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user'; // Toggle between 'user' and 'environment'
+  startCamera(currentFacingMode);
+});
+
 
 
 cameraVideoStream.addEventListener(
