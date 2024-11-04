@@ -97,9 +97,9 @@ shutterButton.addEventListener('click', async () => {
       console.log('Camera is already active');
     }
 
-    // Proceed to capture the image and analyze it
     const data = await captureImage();
-    checkIfHotDog(data).then(isHotDog => {
+    try {
+      const isHotDog = await checkIfHotDog(data);
       if (isHotDog) {
         console.log('This is a hot dog!');
         displayHotDogBanner(true);
@@ -107,15 +107,20 @@ shutterButton.addEventListener('click', async () => {
         console.log('This is not a hot dog.');
         displayHotDogBanner(false);
       }
-    }).catch(err => {
-      console.error('Error checking image:', err);
-      console.log('There was an error analyzing the image.');
-    });
+    } catch (analysisError) {
+      console.error('Error checking image:', analysisError);
+      alert('There was an error analyzing the image.');
+    }
   } catch (err) {
     console.error('Camera access error:', err);
-    alert('Error accessing the camera. Please check permissions and try again.');
+    if (err.name === 'NotAllowedError') {
+      alert('Camera access is not allowed. Please enable camera permissions in your browser settings and try again.');
+    } else {
+      alert('Error accessing the camera. Please check permissions and try again.');
+    }
   }
 });
+
 
 
 photosButton.addEventListener('click', () => {
