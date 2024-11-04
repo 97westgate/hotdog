@@ -127,11 +127,8 @@ prevButton.addEventListener('click', () => {
 })
 
 async function checkIfHotDog(imageData) {
-  const baseURL = window.location.origin.includes('localhost')
-    ? 'http://localhost:3000'
-    : window.location.origin;
-
-  const response = await fetch(`${baseURL}/check-image`, {
+  const baseURL = window.location.origin;
+  const response = await fetch(`${baseURL}/api/check-image`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -156,4 +153,3 @@ async function checkIfHotDog(imageData) {
     return false;
   }
 }
-
