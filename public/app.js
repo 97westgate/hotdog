@@ -16,9 +16,8 @@ const currentImage = 0
 
 const cameraVideoStream = document.getElementById('camera-stream');
 const switchCameraButton = document.getElementById('switch-camera');
-let currentFacingMode = 'user'; // Start with the front-facing camera by default
+let currentFacingMode = 'environment'; // back-facing camera
 
-// Function to start the camera
 function startCamera(facingMode) {
   navigator.mediaDevices.getUserMedia({ video: { facingMode } })
     .then((stream) => {
@@ -28,7 +27,6 @@ function startCamera(facingMode) {
       const track = stream.getVideoTracks()[0];
       const settings = track.getSettings();
 
-      // Apply horizontal flip for front camera if necessary
       if (settings.facingMode === 'user' || !settings.facingMode) {
         cameraVideoStream.style.transform = 'scaleX(-1)';
       } else {
@@ -43,14 +41,12 @@ function startCamera(facingMode) {
     });
 }
 
-// Initial camera start
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   startCamera(currentFacingMode);
 }
 
-// Event listener for switching the camera
 switchCameraButton.addEventListener('click', () => {
-  currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user'; // Toggle between 'user' and 'environment'
+  currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
   startCamera(currentFacingMode);
 });
 
