@@ -1,9 +1,9 @@
 const cameraVideoStream = document.getElementById('camera-stream')
 const shutterButton = document.getElementById('shutter')
 const photosButton = document.getElementById('photos-btn')
-const gallery = document.querySelector('.gallery-view')
-const currentImageElement = document.querySelector('.gallery-view img')
-const closeGalleryButton = document.getElementById('close-gallery')
+// const gallery = document.querySelector('.gallery-view')
+// const currentImageElement = document.querySelector('.gallery-view img')
+// const closeGalleryButton = document.getElementById('close-gallery')
 const nextButton = document.getElementById('next')
 const prevButton = document.getElementById('prev')
 const canvas = document.getElementById('canvas')
@@ -57,7 +57,7 @@ function captureImage() {
 
       setTimeout(() => {
         const data = canvas.toDataURL('image/png');
-        currentImageElement.src = data;
+        // currentImageElement.src = data;
         // photosButton.style.backgroundImage = `url(${data})`;
         capturedImages.unshift(data);
         resolve(data);
@@ -122,20 +122,20 @@ shutterButton.addEventListener('click', async () => {
 // })
 // closeGalleryButton.addEventListener('click', () => gallery.classList.remove('show-gallery'))
 
-nextButton.addEventListener('click', () => {
-  const index = Number(currentImageElement.getAttribute('data-index'))
-  if (capturedImages[index + 1]) {
-    currentImageElement.src = capturedImages[index + 1]
-    currentImageElement.setAttribute('data-index', index + 1)
-  }
-})
-prevButton.addEventListener('click', () => {
-  const index = Number(currentImageElement.getAttribute('data-index'))
-  if (capturedImages[index - 1]) {
-    currentImageElement.src = capturedImages[index - 1]
-    currentImageElement.setAttribute('data-index', index - 1)
-  }
-})
+// nextButton.addEventListener('click', () => {
+//   const index = Number(currentImageElement.getAttribute('data-index'))
+//   if (capturedImages[index + 1]) {
+//     currentImageElement.src = capturedImages[index + 1]
+//     currentImageElement.setAttribute('data-index', index + 1)
+//   }
+// })
+// prevButton.addEventListener('click', () => {
+//   const index = Number(currentImageElement.getAttribute('data-index'))
+//   if (capturedImages[index - 1]) {
+//     currentImageElement.src = capturedImages[index - 1]
+//     currentImageElement.setAttribute('data-index', index - 1)
+//   }
+// })
 
 async function checkIfHotDog(imageData) {
   const baseURL = window.location.origin;
