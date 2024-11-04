@@ -87,6 +87,19 @@ function displayHotDogBanner(hotdogFound) {
 }
 
 shutterButton.addEventListener('click', async () => {
+  try {
+    if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      cameraVideoStream.srcObject = stream;
+      await cameraVideoStream.play();
+      console.log('Camera stream started');
+    }
+  } catch (err) {
+    console.error('Camera access error:', err);
+    alert('Error accessing the camera. Please check permissions and try again.');
+    return;
+  }
+
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
     if (isHotDog) {
@@ -101,6 +114,7 @@ shutterButton.addEventListener('click', async () => {
     console.log('There was an error analyzing the image.');
   });
 });
+
 
 
 photosButton.addEventListener('click', () => {
