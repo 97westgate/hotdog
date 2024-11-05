@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fetch = require('node-fetch');
 
 async function processImage(req, res) {
@@ -24,6 +23,8 @@ async function processImage(req, res) {
     });
 
     const result = await response.json();
+    if (!response.ok) throw new Error('Error with Vision API request');
+    
     res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);

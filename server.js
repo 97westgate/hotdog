@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const processImage = require('./api/check-image');
+const processImage = require('./api/check-image'); // Ensure check-image.js is located in the correct folder
 const app = express();
 const PORT = 3000;
 
