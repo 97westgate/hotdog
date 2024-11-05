@@ -1,4 +1,7 @@
-export default async function handler(req, res) {
+require('dotenv').config();
+const fetch = require('node-fetch');
+
+async function processImage(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -12,10 +15,14 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         requests: [{
           image: { content: imageData.replace('data:image/png;base64,', '') },
-          features: [{ type: 'LABEL_DETECTION', maxResults: 5 }],
+          features: [
+            { type: 'LABEL_DETECTION', maxResults: 20 },
+            { type: 'OBJECT_LOCALIZATION', maxResults: 20 },
+          ],
         }],
       }),
     });
+
     const result = await response.json();
     res.status(200).json(result);
   } catch (error) {
@@ -23,3 +30,5 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Error processing the image' });
   }
 }
+
+module.exports = processImage;

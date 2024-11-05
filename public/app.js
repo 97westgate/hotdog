@@ -119,7 +119,7 @@ shutterButton.addEventListener('click', async () => {
     if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
       cameraVideoStream.srcObject = stream;
-      await cameraVideoStream.play(); // Ensure this is called after a click
+      await cameraVideoStream.play();
       console.log('Camera stream started');
     }
   } catch (err) {
@@ -166,22 +166,33 @@ async function checkIfHotDog(imageData) {
   const baseURL = window.location.origin;
   const response = await fetch(`${baseURL}/api/check-image`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ imageData }),
   });
 
   try {
     const result = await response.json();
-    if (result.responses && result.responses[0] && result.responses[0].labelAnnotations) {
-      console.log('Labels:', result.responses[0].labelAnnotations);
-      return result.responses[0].labelAnnotations.some(label => {
-        const labelLower = label.description.toLowerCase();
-        return labelLower.includes('hot dog') || labelLower.includes('sausage')
-      });
+    if (result.responses && result.responses[0]) {
+      const response = result.responses[0];
+      console.log('Our response', response)
+      
+      // Keywords to detect hot dog-related items
+      const hotDogKeywords = ['hot dog', 'sausage', 'wurst'];
+
+      // Check LABEL_DETECTION
+      const labels = response.labelAnnotations || [];
+      const isHotDogInLabels = labels.some(label => hotDogKeywords.some(keyword => label.description.toLowerCase().includes(keyword)));
+
+      // Check OBJECT_LOCALIZATION
+      const objects = response.localizedObjectAnnotations || [];
+      const isHotDogInObjects = objects.some(object => hotDogKeywords.some(keyword => object.name.toLowerCase().includes(keyword)));
+
+      // Check WEB_DETECTION
+      // const webEntities = response.webDetection?.webEntities || [];
+      // const isHotDogInWebEntities = webEntities.some(entity => hotDogKeywords.some(keyword => entity.description.toLowerCase().includes(keyword)));
+
+      return isHotDogInObjects || isHotDogInLabels
     } else {
-      console.error('No label annotations found or invalid response:', result);
       return false;
     }
   } catch (error) {
