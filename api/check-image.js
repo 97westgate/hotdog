@@ -8,6 +8,7 @@ async function processImage(req, res) {
   const { imageData } = req.body;
 
   try {
+    console.log('at least within the try')
     const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${process.env.GOOGLE_CLOUD_VISION_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
