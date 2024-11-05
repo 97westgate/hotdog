@@ -178,7 +178,7 @@ async function checkIfHotDog(imageData) {
       console.log('Labels:', result.responses[0].labelAnnotations);
       return result.responses[0].labelAnnotations.some(label => {
         const labelLower = label.description.toLowerCase();
-        return labelLower.includes('hot dog') || labelLower.includes('sausage') || labelLower.includes('food');
+        return labelLower.includes('hot dog') || labelLower.includes('sausage')
       });
     } else {
       console.error('No label annotations found or invalid response:', result);
