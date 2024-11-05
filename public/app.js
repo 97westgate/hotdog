@@ -86,11 +86,23 @@ shutterButton.addEventListener('click', async () => {
     body: JSON.stringify({ imageData: data }),
   });
 
-  const result = await response.json();
-  console.log('Result', result)
-  const isHotDog = (result.responses[0].labelAnnotations || []).some(label => 
-    ['hot dog', 'sausage', 'wurst'].some(keyword => label.description.toLowerCase().includes(keyword))
-  );
+  try {
+    const result = await response.json();
+    if (result.responses && result.responses[0]) {
+      console.log('Result', result)
+      const isHotDog = (result.responses[0].labelAnnotations || []).some(label => 
+        ['hot dog', 'sausage', 'wurst'].some(keyword => label.description.toLowerCase().includes(keyword))
+      );
+      return isHotDog
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error parsing JSON response:', error);
+    return false;
+  }
+
+
 
   displayHotDogBanner(isHotDog);
 });
