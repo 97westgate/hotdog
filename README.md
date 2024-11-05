@@ -1,4 +1,4 @@
-# HotDog or Not HotDog
+# 🌭 HotDog or Not HotDog ✅❌
 
 > *"What would you say if I told you there is an app on the market that tells you if you have a hotdog or not a hotdog. It is very good and I do not want to work on it any more. You can hire someone else."*
 
