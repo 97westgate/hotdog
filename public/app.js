@@ -92,7 +92,13 @@ function captureImage() {
 }
 
 function displayHotDogBanner(hotdogFound) {
+  const existingBanner = document.getElementById('hotdog-banner');
+  if (existingBanner) {
+    existingBanner.remove();
+  }
+
   const banner = document.createElement('div');
+  banner.id = 'hotdog-banner';
   banner.style.position = 'fixed';
   banner.style.top = hotdogFound ? '0' : 'auto';
   banner.style.bottom = hotdogFound ? 'auto' : '0';
@@ -108,13 +114,18 @@ function displayHotDogBanner(hotdogFound) {
   banner.appendChild(img);
   document.body.appendChild(banner);
 
-  // setTimeout(() => {
-  //   banner.remove();
-  // }, 5000);
+  setTimeout(() => {
+    banner.remove();
+  }, 5000);
 }
 
 shutterButton.addEventListener('click', async () => {
-  console.log('Button was clickedeth')
+  const existingBanner = document.getElementById('hotdog-banner');
+  if (existingBanner) {
+    existingBanner.remove();
+  }
+
+  console.log('Button was clicked');
   try {
     if (!cameraVideoStream.srcObject || cameraVideoStream.srcObject.getTracks().length === 0) {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -129,16 +140,13 @@ shutterButton.addEventListener('click', async () => {
 
   const data = await captureImage();
   checkIfHotDog(data).then(isHotDog => {
-    if (isHotDog) {
-      displayHotDogBanner(true);
-    } else {
-      displayHotDogBanner(false);
-    }
+    displayHotDogBanner(isHotDog);
   }).catch(err => {
     console.error('Error checking image:', err);
     alert('There was an error analyzing the image.');
   });
 });
+
 
 
 // photosButton.addEventListener('click', () => {
