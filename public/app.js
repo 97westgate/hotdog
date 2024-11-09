@@ -78,7 +78,6 @@ function displayHotDogBanner(isHotDog) {
 shutterButton.addEventListener('click', async () => {
   console.log('Button was clicked')
   const data = captureImage();
-  // cameraVideoStream.style.display = 'none'; // Freeze frame effect
 
   const response = await fetch('/api/check-image', {
     method: 'POST',
@@ -89,11 +88,21 @@ shutterButton.addEventListener('click', async () => {
   try {
     const result = await response.json();
     if (result.responses && result.responses[0]) {
-      console.log('Result', result)
-      const isHotDog = (result.responses[0].labelAnnotations || []).some(label => 
-        ['hot dog', 'sausage', 'wurst'].some(keyword => label.description.toLowerCase().includes(keyword))
+      console.log('Result', result);
+      
+      const isHotDog = (
+        (result.responses[0].labelAnnotations || []).some(label => 
+          ['hot dog', 'hotdog', 'sausage', 'wurst'].some(keyword => 
+            label.description.toLowerCase().includes(keyword)
+          )
+        ) ||
+        (result.responses[0].localizedObjectAnnotations || []).some(obj => 
+          ['Hot dog', 'Hotdog'].includes(obj.name)
+        )
       );
-      displayHotDogBanner(isHotDog); // Move this line here
+
+      console.log('Is it a hot dog?', isHotDog);
+      displayHotDogBanner(isHotDog);
       return isHotDog;
     } else {
       return false;
